@@ -383,22 +383,27 @@ section {
 
     .nav-menu {
         position: fixed;
-        left: -100%;
-        top: 70px;
-        gap: 0;
+        right: -100%;
+        top: 0;
         flex-direction: column;
         background: var(--primary-color);
-        width: 100%;
-        text-align: center;
-        transition: 0.3s;
+        width: 250px; /* Side drawer width */
+        height: 100vh; /* Full height */
+        text-align: left; /* Align text to left or center */
+        transition: 0.3s ease-in-out;
+        box-shadow: -2px 0 10px rgba(0,0,0,0.5); /* Shadow for depth */
+        padding-top: 80px; /* Space for close button or just spacing */
+        align-items: center; /* Center items horizontally */
     }
 
     .nav-menu.active {
-        left: 0;
+        right: 0; /* Slide in from right */
     }
 
     .nav-menu li {
-        margin: 16px 0;
+        margin: 20px 0;
+        width: 100%;
+        text-align: center;
     }
 
     .hero-content h1 {
