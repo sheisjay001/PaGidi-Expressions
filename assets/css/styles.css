@@ -1,5 +1,5 @@
+@import url('blog-styles.css');
 :root {
-    --primary-color: #0a192f; /* Navy Blue */
     --secondary-color: #e63946; /* Red */
     --accent-color: #ffb703; /* Yellow */
     --text-light: #ccd6f6;
