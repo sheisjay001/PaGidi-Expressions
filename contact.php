@@ -1,4 +1,5 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 
 // Configuration
@@ -13,6 +14,13 @@ $response = [
 
 // Check request method
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // CSRF Check
+    if (empty($_POST['csrf_token']) || empty($_SESSION['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+         $response['message'] = 'Security validation failed. Please refresh the page and try again.';
+         echo json_encode($response);
+         exit;
+    }
+
     // Get and sanitize input
     $name = filter_var(trim($_POST["name"] ?? ''), FILTER_SANITIZE_STRING);
     $email = filter_var(trim($_POST["email"] ?? ''), FILTER_SANITIZE_EMAIL);
