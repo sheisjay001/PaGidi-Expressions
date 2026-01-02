@@ -225,6 +225,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 10. Preloader
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        window.addEventListener('load', () => {
+            preloader.style.opacity = '0';
+            preloader.style.visibility = 'hidden';
+            setTimeout(() => {
+                preloader.remove();
+            }, 500);
+        });
+    }
+
+    // 11. Stats Counter Animation
+    const statsSection = document.querySelector('.stats');
+    const counters = document.querySelectorAll('.counter');
+    let started = false;
+
+    if (statsSection && counters.length > 0) {
+        const startCounters = () => {
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const speed = 200; // The lower the slower
+                const increment = target / speed;
+
+                const updateCount = () => {
+                    const count = +counter.innerText;
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + increment);
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !started) {
+                startCounters();
+                started = true;
+            }
+        });
+
+        statsObserver.observe(statsSection);
+    }
+
+    // 12. Testimonials Carousel
+    const testimonials = document.querySelectorAll('.testimonial-item');
+    if (testimonials.length > 0) {
+        let currentTestimonial = 0;
+        
+        setInterval(() => {
+            testimonials[currentTestimonial].classList.remove('active');
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            testimonials[currentTestimonial].classList.add('active');
+        }, 5000); // Switch every 5 seconds
+    }
+
     // Helper: Update Active Link on Scroll
     function updateActiveLink() {
         const sections = document.querySelectorAll('section');
