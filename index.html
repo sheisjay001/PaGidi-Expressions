@@ -21,13 +21,18 @@
     <nav class="navbar">
         <div class="container">
             <a href="#" class="logo">PaGidi Expressions</a>
-            <div class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
+            <div class="nav-right" style="display: flex; align-items: center;">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="menu-toggle" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
             </div>
             <ul class="nav-menu">
-                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#mission" class="nav-link">Mission</a></li>
                 <li><a href="blog.html" class="nav-link">Expressions</a></li>
@@ -100,24 +105,37 @@
                     <a href="https://selar.com/dearestsuicide" target="_blank" class="btn btn-small">Get on Selar</a>
                 </div>
                 <div class="book-card reveal">
-                    <img src="assets/images/death-option-book.jfif" alt="Sometimes Death Becomes the Only Option" loading="lazy">
-                    <h3>Sometimes Death Becomes the Only Option</h3>
-                    <p>Another best seller exploring the depths of despair and the reality of mental struggles.</p>
-                    <a href="https://selar.com/dearestsuicide2" target="_blank" class="btn btn-small">Get on Selar</a>
+                    <img src="assets/images/relationship-book.jpeg" alt="Where Do People Go When They Have Relationship Problems?" loading="lazy">
+                    <h3>Where Do People Go When They Have Relationship Problems?</h3>
+                    <p>Understanding the dynamics of modern relationships and finding your path to clarity.</p>
+                    <a href="https://selar.com/relationshipproblems" target="_blank" class="btn btn-small">Get on Selar</a>
                 </div>
                 <div class="book-card reveal">
                     <img src="assets/images/new-year-resolution-book.jpg" alt="My New Year Resolution" loading="lazy">
                     <h3>My New Year Resolution</h3>
-                    <p>A reflective piece on starting anew and setting intentions for the future.</p>
-                    <a href="https://selar.co/m/PaGidi" target="_blank" class="btn btn-small">Get on Selar</a>
+                    <p>A practical guide to making resolutions that stick and transforming your life year after year.</p>
+                    <a href="#" class="btn btn-small">Get on Selar</a>
                 </div>
                 <div class="book-card reveal">
-                    <img src="assets/images/relationship-book.jpeg" alt="Where Do People Go When They Have Relationship Problems?" loading="lazy">
-                    <h3>Where Do People Go When They Have Relationship Problems?</h3>
-                    <p>Discover the emotional destinations we all run to and how to navigate them healthily.</p>
-                    <a href="https://selar.com/relationshipproblems" target="_blank" class="btn btn-small">Get on Selar</a>
+                    <img src="assets/images/suicide-book.jfif" alt="Sometimes, DEATH Becomes the Only Option" loading="lazy">
+                    <h3>Sometimes, DEATH Becomes the Only Option</h3>
+                    <p>Exploring the darkest moments of human existence with a light of hope and understanding.</p>
+                    <a href="https://selar.com/dearestsuicide2" target="_blank" class="btn btn-small">Get on Selar</a>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section reveal">
+        <div class="container newsletter-content">
+            <h2>Join Our Community</h2>
+            <p>Subscribe to receive updates on new expressions, books, and events.</p>
+            <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Thanks for subscribing! We will keep you posted.', 'success');">
+                <label for="newsletter-email" class="sr-only">Email Address</label>
+                <input type="email" id="newsletter-email" placeholder="Enter your email address" required>
+                <button type="submit" class="btn btn-primary">Subscribe</button>
+            </form>
         </div>
     </section>
 
@@ -125,36 +143,68 @@
     <section id="contact" class="contact">
         <div class="container">
             <h2 class="section-title reveal">Get in Touch</h2>
-            <p class="reveal">Welcome Home. Let's connect and share our stories.</p>
-            <form class="contact-form reveal" id="contactForm">
-                <div class="form-group">
-                    <label for="name" class="sr-only">Your Name</label>
-                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <div class="contact-container reveal">
+                <div class="contact-info">
+                    <h3>Let's Connect</h3>
+                    <p>Have a question, a story to share, or want to invite PaGidi for a speaking engagement? We'd love to hear from you.</p>
+                    <br>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>pagidiexpressions@gmail.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+234 800 000 0000</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Lagos, Nigeria</span>
+                    </div>
+                    <div class="social-links" style="margin-top: 20px;">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="email" class="sr-only">Your Email</label>
-                    <input type="email" id="email" name="email" placeholder="Your Email" required>
-                </div>
-                <div class="form-group">
-                    <label for="message" class="sr-only">Your Message</label>
-                    <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-secondary">Send Message</button>
-            </form>
+                <form class="contact-form" id="contact-form">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" class="form-control" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer>
         <div class="container">
-            <div class="social-links">
-                <a href="https://www.facebook.com/pagidiexpressionspage" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://x.com/_pagidi" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="https://www.instagram.com/_pagidi/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            </div>
             <p>&copy; <span id="year">2025</span> PaGidi Expressions. All Rights Reserved.</p>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="cookie-banner">
+        <div class="cookie-content">
+            <p>We use cookies to ensure you get the best experience on our website. By continuing to visit this site you agree to our use of cookies.</p>
+        </div>
+        <button id="accept-cookies" class="cookie-btn">Got it!</button>
+    </div>
 
     <script src="assets/js/main.js"></script>
 </body>

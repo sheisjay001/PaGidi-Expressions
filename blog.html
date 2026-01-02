@@ -23,10 +23,15 @@
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo">PaGidi Expressions</a>
-            <div class="menu-toggle" id="mobile-menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
+            <div class="nav-right" style="display: flex; align-items: center;">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="menu-toggle" id="mobile-menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.html" class="nav-link">Home</a></li>
@@ -100,7 +105,7 @@
                         data-href="https://www.facebook.com/pagidiexpressionspage" 
                         data-tabs="timeline" 
                         data-width="500" 
-                        data-height="800" 
+                        data-height="600" 
                         data-small-header="false" 
                         data-adapt-container-width="true" 
                         data-hide-cover="false" 
@@ -116,16 +121,24 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer>
         <div class="container">
-            <div class="social-links">
-                <a href="https://www.facebook.com/pagidiexpressionspage" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://x.com/_pagidi" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="https://www.instagram.com/_pagidi/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            </div>
             <p>&copy; <span id="year">2025</span> PaGidi Expressions. All Rights Reserved.</p>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="cookie-banner">
+        <div class="cookie-content">
+            <p>We use cookies to ensure you get the best experience on our website. By continuing to visit this site you agree to our use of cookies.</p>
+        </div>
+        <button id="accept-cookies" class="cookie-btn">Got it!</button>
+    </div>
 
     <script src="assets/js/main.js"></script>
 </body>
