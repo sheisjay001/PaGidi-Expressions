@@ -148,7 +148,7 @@
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-phone"></i>
-                        <span>+234 913 626 1020<br>+234 905 456 0128</span>
+                        <span>+234 913 626 1020</span>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-map-marker-alt"></i>
@@ -161,10 +161,57 @@
                         <a href="#"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
-                <div class="contact-options" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; width: 100%;">
-                    <button class="btn btn-primary">You need/want to speak with a counsellor? Option</button>
-                    <button class="btn btn-primary">You want to share your story? Option</button>
-                    <button class="btn btn-primary">You want to partner with us? Option</button>
+                <div class="contact-options" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; width: 100%;">
+                    <form class="contact-form" data-topic="Counsellor Request">
+                        <h4>You need / want to speak with a counsellor?</h4>
+                        <div class="form-group">
+                            <label for="counsellor-name">Name</label>
+                            <input type="text" id="counsellor-name" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="counsellor-email">Email</label>
+                            <input type="email" id="counsellor-email" name="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="counsellor-message">Message</label>
+                            <textarea id="counsellor-message" name="message" class="form-control" rows="4" placeholder="Briefly describe what you need help with" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Request</button>
+                    </form>
+
+                    <form class="contact-form" data-topic="Story Share">
+                        <h4>You want to share your story?</h4>
+                        <div class="form-group">
+                            <label for="story-name">Name</label>
+                            <input type="text" id="story-name" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="story-email">Email</label>
+                            <input type="email" id="story-email" name="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="story-message">Message</label>
+                            <textarea id="story-message" name="message" class="form-control" rows="4" placeholder="Share the story you’d like us to publish or discuss" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Story</button>
+                    </form>
+
+                    <form class="contact-form" data-topic="Partnership">
+                        <h4>You want to partner with us?</h4>
+                        <div class="form-group">
+                            <label for="partner-name">Name</label>
+                            <input type="text" id="partner-name" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="partner-email">Email</label>
+                            <input type="email" id="partner-email" name="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="partner-message">Message</label>
+                            <textarea id="partner-message" name="message" class="form-control" rows="4" placeholder="Tell us about your partnership idea" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Partnership Proposal</button>
+                    </form>
                 </div>
             </div>
         </div>

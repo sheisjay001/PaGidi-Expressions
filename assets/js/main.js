@@ -142,39 +142,44 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => console.error('Error fetching CSRF token:', err));
 
-    const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            formData.append('csrf_token', csrfToken);
+    const contactForms = document.querySelectorAll('.contact-form');
+    if (contactForms.length > 0) {
+        contactForms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const topic = this.dataset.topic || 'General';
+                const originalMessage = formData.get('message') || '';
+                formData.set('message', `Topic: ${topic}\n\n${originalMessage}`);
+                formData.append('csrf_token', csrfToken);
 
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.textContent;
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.textContent;
+                submitBtn.textContent = 'Sending...';
+                submitBtn.disabled = true;
 
-            fetch('contact.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast(data.message, 'success');
-                    this.reset();
-                } else {
-                    showToast(data.message, 'error');
-                }
-            })
-            .catch(error => {
-                showToast('An error occurred. Please try again.', 'error');
-                console.error('Error:', error);
-            })
-            .finally(() => {
-                submitBtn.textContent = originalBtnText;
-                submitBtn.disabled = false;
+                fetch('contact.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        this.reset();
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('An error occurred. Please try again.', 'error');
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    submitBtn.textContent = originalBtnText;
+                    submitBtn.disabled = false;
+                });
             });
         });
     }
