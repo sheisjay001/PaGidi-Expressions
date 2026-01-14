@@ -57,3 +57,6 @@ Options -Indexes
     ExpiresByType image/x-icon "access plus 1 year"
     ExpiresDefault "access plus 2 days"
 </IfModule>
+
+# Ensure .jfif serves as JPEG
+AddType image/jpeg .jfif .jfi .jif
