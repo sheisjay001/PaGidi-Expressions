@@ -1,0 +1,37 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "The Weight of Silence",
+      "excerpt": "Sometimes the heaviest things we carry are the words we never speak. Silence isn't always peace; sometimes it's a war...",
+      "content": "Sometimes the heaviest things we carry are the words we never speak. Silence isn't always peace; sometimes it's a war we fight within ourselves. In this piece, I explore the burden of unexpressed emotions and the courage it takes to break the silence.",
+      "tag": "#Expressions",
+      "date": "2025-01-15",
+      "author": "PaGidi",
+      "facebook_url": "https://web.facebook.com/share/p/1DF1RStEG8/",
+      "featured": true
+    },
+    {
+      "id": 2,
+      "title": "Healing is a Journey",
+      "excerpt": "You don't just wake up one day and everything is fine. Healing is messy, it's non-linear, and it requires patience...",
+      "content": "You don't just wake up one day and everything is fine. Healing is messy, it's non-linear, and it requires patience. This expression delves into the reality of the healing process and why we need to be gentle with ourselves along the way.",
+      "tag": "#Expressions",
+      "date": "2025-01-10",
+      "author": "PaGidi",
+      "facebook_url": "https://web.facebook.com/share/p/17mw13cyL5/",
+      "featured": true
+    },
+    {
+      "id": 3,
+      "title": "To The Broken Hearted",
+      "excerpt": "It's okay to feel. It's okay to cry. Your emotions are valid, and your pain is real. Let it out, then let it go...",
+      "content": "It's okay to feel. It's okay to cry. Your emotions are valid, and your pain is real. Let it out, then let it go. This piece is a gentle reminder that experiencing pain is part of being human, and there's no shame in expressing it.",
+      "tag": "#Expressions",
+      "date": "2025-01-05",
+      "author": "PaGidi",
+      "facebook_url": "https://web.facebook.com/share/p/1AbqKj71gM/",
+      "featured": true
+    }
+  ]
+}
