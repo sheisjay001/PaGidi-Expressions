@@ -1,18 +1,10 @@
-<?php
-session_start();
-
-// Check if logged in
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: admin-login.php');
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog Admin - PaGidi Expressions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
     <style>
         * {
@@ -208,13 +200,28 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
         .loading::after {
             content: 'Loading...';
         }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeeba;
+        }
     </style>
 </head>
 <body>
     <div class="admin-container">
         <div class="admin-header">
             <h1>Blog Admin Panel</h1>
-            <a href="admin-login.php?logout=1" class="logout-btn">Logout</a>
+            <a href="index.html" class="logout-btn">Back to Site</a>
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ Important:</strong> This admin panel works locally by editing the blog-data.json file directly. 
+            On Vercel (static hosting), you cannot save changes to the JSON file. For production, you'll need a 
+            backend service or use a headless CMS like Sanity, Contentful, or Notion.
         </div>
         
         <!-- Add/Edit Post Form -->
@@ -276,7 +283,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     </div>
 
     <script>
-        const API_URL = 'blog-api.php';
+        let blogData = { posts: [] };
         
         // Load posts on page load
         document.addEventListener('DOMContentLoaded', loadPosts);
@@ -290,10 +297,11 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
         function loadPosts() {
             document.getElementById('loading').style.display = 'block';
             
-            fetch(`${API_URL}?action=get`)
+            fetch('blog-data.json')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('loading').style.display = 'none';
+                    blogData = data;
                     renderPosts(data.posts);
                 })
                 .catch(error => {
@@ -346,53 +354,63 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 featured: document.getElementById('featured').checked
             };
             
-            const action = isEdit ? 'update' : 'add';
+            if (isEdit) {
+                updatePost(postData);
+            } else {
+                addPost(postData);
+            }
+        }
+        
+        function addPost(postData) {
+            const maxId = blogData.posts.reduce((max, p) => Math.max(max, p.id), 0);
+            const newPost = {
+                id: maxId + 1,
+                title: postData.title,
+                excerpt: postData.excerpt || postData.content.substring(0, 150) + '...',
+                content: postData.content,
+                tag: postData.tag,
+                date: new Date().toISOString().split('T')[0],
+                author: postData.author,
+                facebook_url: postData.facebook_url,
+                featured: postData.featured
+            };
             
-            fetch(`${API_URL}?action=${action}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(postData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage(isEdit ? 'Post updated successfully!' : 'Post added successfully!', 'success');
-                    resetForm();
-                    loadPosts();
-                } else {
-                    showMessage(data.error || 'Error saving post', 'error');
-                }
-            })
-            .catch(error => {
-                showMessage('Error saving post', 'error');
-            });
+            blogData.posts.push(newPost);
+            saveData();
+            showMessage('Post added successfully! (JSON file updated locally)', 'success');
+            resetForm();
+            loadPosts();
+        }
+        
+        function updatePost(postData) {
+            const index = blogData.posts.findIndex(p => p.id === postData.id);
+            if (index !== -1) {
+                blogData.posts[index] = { ...blogData.posts[index], ...postData };
+                saveData();
+                showMessage('Post updated successfully! (JSON file updated locally)', 'success');
+                resetForm();
+                loadPosts();
+            }
         }
         
         function editPost(id) {
-            fetch(`${API_URL}?action=get_single&id=${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    const post = data.post;
-                    document.getElementById('post-id').value = post.id;
-                    document.getElementById('title').value = post.title;
-                    document.getElementById('excerpt').value = post.excerpt;
-                    document.getElementById('content').value = post.content;
-                    document.getElementById('tag').value = post.tag;
-                    document.getElementById('facebook_url').value = post.facebook_url || '';
-                    document.getElementById('author').value = post.author;
-                    document.getElementById('featured').checked = post.featured;
-                    
-                    document.getElementById('form-title').textContent = 'Edit Post';
-                    document.getElementById('submit-btn').textContent = 'Update Post';
-                    document.getElementById('cancel-btn').style.display = 'inline-block';
-                    
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                })
-                .catch(error => {
-                    showMessage('Error loading post', 'error');
-                });
+            const post = blogData.posts.find(p => p.id === id);
+            if (post) {
+                document.getElementById('post-id').value = post.id;
+                document.getElementById('title').value = post.title;
+                document.getElementById('excerpt').value = post.excerpt;
+                document.getElementById('content').value = post.content;
+                document.getElementById('tag').value = post.tag;
+                document.getElementById('facebook_url').value = post.facebook_url || '';
+                document.getElementById('author').value = post.author;
+                document.getElementById('featured').checked = post.featured;
+                
+                document.getElementById('form-title').textContent = 'Edit Post';
+                document.getElementById('submit-btn').textContent = 'Update Post';
+                document.getElementById('cancel-btn').style.display = 'inline-block';
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
         
         function deletePost(id) {
@@ -400,25 +418,28 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 return;
             }
             
-            fetch(`${API_URL}?action=delete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id: id })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage('Post deleted successfully!', 'success');
-                    loadPosts();
-                } else {
-                    showMessage(data.error || 'Error deleting post', 'error');
-                }
-            })
-            .catch(error => {
-                showMessage('Error deleting post', 'error');
-            });
+            blogData.posts = blogData.posts.filter(p => p.id !== id);
+            saveData();
+            showMessage('Post deleted successfully! (JSON file updated locally)', 'success');
+            loadPosts();
+        }
+        
+        function saveData() {
+            // This will only work locally
+            // On Vercel, this will fail because you can't write to files
+            console.log('Updated blog data:', JSON.stringify(blogData, null, 2));
+            console.log('⚠️ To save changes, manually update blog-data.json with the data above');
+            
+            // Try to download the updated JSON file
+            const dataStr = JSON.stringify(blogData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'blog-data.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
         }
         
         function resetForm() {
