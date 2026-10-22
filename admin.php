@@ -709,7 +709,10 @@ requireAdmin();
         function savePost() {
             const postId = document.getElementById('post-id').value;
             const isEdit = postId !== '';
-            
+
+            const featuredCheckbox = document.getElementById('featured');
+            const featuredValue = featuredCheckbox ? featuredCheckbox.checked : false;
+
             const postData = {
                 id: isEdit ? parseInt(postId) : null,
                 title: document.getElementById('title').value,
@@ -719,7 +722,7 @@ requireAdmin();
                 author: document.getElementById('author').value,
                 category: document.getElementById('category').value,
                 status: document.getElementById('status-published').checked ? 'published' : 'draft',
-                featured: document.getElementById('featured').checked,
+                featured: featuredValue,
                 published_at: document.getElementById('published_at').value || null,
                 meta_title: document.getElementById('meta_title').value,
                 meta_description: document.getElementById('meta_description').value,
