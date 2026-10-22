@@ -481,7 +481,7 @@ requireAdmin();
                 <div class="upload-area" onclick="document.getElementById('cover-image').click()">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <p>Drag & drop, or browse to upload</p>
-                    <small>PNG, JPG, WEBP up to 20MB</small>
+                    <small>PNG, JPG, WEBP up to 2MB</small>
                 </div>
                 <input type="file" id="cover-image" accept="image/png,image/jpeg,image/webp" style="display: none;" onchange="handleImageUpload(this)">
                 <div class="image-preview" id="image-preview">
