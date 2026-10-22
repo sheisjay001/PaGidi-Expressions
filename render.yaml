@@ -1,7 +1,7 @@
 services:
   - type: web
     name: pagidi-expressions
-    env: docker
+    runtime: docker
     plan: free
     envVars:
       - key: DB_HOST
