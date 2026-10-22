@@ -1,5 +1,10 @@
 FROM php:8.2-apache
 
+# Install PostgreSQL client library and development files
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install PostgreSQL extension for database connection
 RUN docker-php-ext-install pdo pdo_pgsql
 
