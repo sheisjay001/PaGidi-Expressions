@@ -114,29 +114,21 @@
 
     <script src="assets/js/main.js"></script>
     <script>
-        // Load blog posts from JSON
+        // Load blog posts from PHP API
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('blog-data.json')
+            fetch('api/blog.php?action=get_posts&status=published&featured=true')
                 .then(response => response.json())
                 .then(data => {
                     const blogGrid = document.getElementById('blog-grid');
                     
-                    if (data.posts && data.posts.length > 0) {
-                        // Filter featured posts and sort by date
-                        const featuredPosts = data.posts
-                            .filter(post => post.featured === true)
-                            .sort((a, b) => new Date(b.date) - new Date(a.date));
-                        
-                        blogGrid.innerHTML = featuredPosts.map(post => `
+                    if (data.success && data.posts && data.posts.length > 0) {
+                        blogGrid.innerHTML = data.posts.map(post => `
                             <article class="blog-card reveal">
                                 <div class="blog-content">
-                                    <span class="blog-tag">${escapeHtml(post.tag)}</span>
+                                    ${post.category ? `<span class="blog-tag">${escapeHtml(post.category)}</span>` : ''}
                                     <h3>${escapeHtml(post.title)}</h3>
                                     <p>${escapeHtml(post.excerpt)}</p>
-                                    ${post.facebook_url ? 
-                                        `<a href="${escapeHtml(post.facebook_url)}" target="_blank" class="read-more">Read on Facebook <i class="fas fa-arrow-right"></i></a>` : 
-                                        ''
-                                    }
+                                    <a href="blog-post.php?slug=${escapeHtml(post.slug)}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
                                 </div>
                             </article>
                         `).join('');
