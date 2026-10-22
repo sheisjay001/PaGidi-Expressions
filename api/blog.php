@@ -85,9 +85,6 @@ try {
 
             $data = json_decode(file_get_contents('php://input'), true);
 
-            // Log the featured value for debugging
-            error_log("Featured value received: " . var_export($data['featured'] ?? 'NOT SET', true));
-
             $slug = generateSlug($data['title']);
 
             // Check if slug exists
@@ -102,14 +99,14 @@ try {
 
             $publishedAt = ($data['status'] === 'published') ? date('Y-m-d H:i:s') : null;
 
-            // Convert featured to boolean (handle empty strings, null, etc.)
+            // Convert featured to 0/1. PDO + PostgreSQL turns a PHP false into an
+            // empty string, which is invalid input syntax for a boolean column.
             $featured = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
             if ($featured === null) {
                 $featured = false;
             }
+            $featured = $featured ? 1 : 0;
 
-            error_log("Featured after conversion: " . var_export($featured, true));
-            
             $stmt = $db->prepare($sql);
             $stmt->execute([
                 $data['title'],
@@ -143,11 +140,13 @@ try {
             // Update slug if title changed
             $slug = $data['slug'] ?? generateSlug($data['title']);
 
-            // Convert featured to boolean (handle empty strings, null, etc.)
+            // Convert featured to 0/1. PDO + PostgreSQL turns a PHP false into an
+            // empty string, which is invalid input syntax for a boolean column.
             $featured = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
             if ($featured === null) {
                 $featured = false;
             }
+            $featured = $featured ? 1 : 0;
             
             $sql = "UPDATE posts SET
                     title = ?,
