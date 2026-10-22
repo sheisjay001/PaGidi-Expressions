@@ -212,6 +212,8 @@ try {
     }
 
 } catch (Exception $e) {
+    error_log("Blog API Error: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
     http_response_code(400);
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
