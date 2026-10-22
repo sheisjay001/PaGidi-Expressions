@@ -94,10 +94,13 @@ try {
                 $slug .= '-' . time();
             }
             
-            $sql = "INSERT INTO posts (title, slug, excerpt, content, author, category, status, featured, cover_image, meta_title, meta_description, meta_keywords, published_at) 
+            $sql = "INSERT INTO posts (title, slug, excerpt, content, author, category, status, featured, cover_image, meta_title, meta_description, meta_keywords, published_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
             $publishedAt = ($data['status'] === 'published') ? date('Y-m-d H:i:s') : null;
+            
+            // Convert featured to boolean
+            $featured = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN);
             
             $stmt = $db->prepare($sql);
             $stmt->execute([
@@ -108,7 +111,7 @@ try {
                 $data['author'] ?? 'PaGidi',
                 $data['category'] ?? null,
                 $data['status'] ?? 'draft',
-                $data['featured'] ?? false,
+                $featured,
                 $data['cover_image'] ?? null,
                 $data['meta_title'] ?? null,
                 $data['meta_description'] ?? null,
@@ -132,22 +135,25 @@ try {
             // Update slug if title changed
             $slug = $data['slug'] ?? generateSlug($data['title']);
             
-            $sql = "UPDATE posts SET 
-                    title = ?, 
-                    excerpt = ?, 
-                    content = ?, 
-                    author = ?, 
-                    category = ?, 
-                    status = ?, 
-                    featured = ?, 
-                    cover_image = ?, 
-                    meta_title = ?, 
-                    meta_description = ?, 
+            // Convert featured to boolean
+            $featured = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN);
+            
+            $sql = "UPDATE posts SET
+                    title = ?,
+                    excerpt = ?,
+                    content = ?,
+                    author = ?,
+                    category = ?,
+                    status = ?,
+                    featured = ?,
+                    cover_image = ?,
+                    meta_title = ?,
+                    meta_description = ?,
                     meta_keywords = ?,
-                    published_at = CASE 
-                        WHEN ? = 'published' AND published_at IS NULL THEN NOW() 
-                        WHEN ? = 'draft' THEN NULL 
-                        ELSE published_at 
+                    published_at = CASE
+                        WHEN ? = 'published' AND published_at IS NULL THEN NOW()
+                        WHEN ? = 'draft' THEN NULL
+                        ELSE published_at
                     END,
                     slug = ?
                     WHERE id = ?";
@@ -160,7 +166,7 @@ try {
                 $data['author'] ?? 'PaGidi',
                 $data['category'] ?? null,
                 $data['status'] ?? 'draft',
-                $data['featured'] ?? false,
+                $featured,
                 $data['cover_image'] ?? null,
                 $data['meta_title'] ?? null,
                 $data['meta_description'] ?? null,
