@@ -1,28 +1,28 @@
--- PaGidi Expressions Blog Database Schema
+-- PaGidi Expressions Blog Database Schema (PostgreSQL)
 
 -- Posts table
 CREATE TABLE IF NOT EXISTS posts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) NOT NULL UNIQUE,
     excerpt TEXT,
-    content LONGTEXT NOT NULL,
+    content TEXT NOT NULL,
     author VARCHAR(100) DEFAULT 'PaGidi',
     category VARCHAR(100),
-    status ENUM('draft', 'published') DEFAULT 'draft',
+    status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
     featured BOOLEAN DEFAULT FALSE,
     cover_image VARCHAR(255),
     meta_title VARCHAR(255),
     meta_description TEXT,
     meta_keywords VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     published_at TIMESTAMP NULL
 );
 
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
     slug VARCHAR(100) NOT NULL UNIQUE,
     description TEXT,
@@ -34,10 +34,23 @@ INSERT INTO categories (name, slug, description) VALUES
 ('Expressions', 'expressions', 'Personal expressions and thoughts'),
 ('Mental Health', 'mental-health', 'Mental health and wellness topics'),
 ('Life Stories', 'life-stories', 'Personal stories and experiences')
-ON DUPLICATE KEY UPDATE name=name;
+ON CONFLICT (name) DO NOTHING;
 
 -- Index for faster queries
-CREATE INDEX idx_status ON posts(status);
-CREATE INDEX idx_featured ON posts(featured);
-CREATE INDEX idx_published_at ON posts(published_at);
-CREATE INDEX idx_category ON posts(category);
+CREATE INDEX IF NOT EXISTS idx_status ON posts(status);
+CREATE INDEX IF NOT EXISTS idx_featured ON posts(featured);
+CREATE INDEX IF NOT EXISTS idx_published_at ON posts(published_at);
+CREATE INDEX IF NOT EXISTS idx_category ON posts(category);
+
+-- Function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Trigger to auto-update updated_at
+CREATE TRIGGER update_posts_updated_at BEFORE UPDATE ON posts
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
