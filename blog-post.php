@@ -21,6 +21,40 @@ if (!$post) {
     header('Location: blog.html');
     exit;
 }
+
+// Absolute image URL for social sharing (og:image must not be relative)
+$ogImage = !empty($post['cover_image'])
+    ? (preg_match('#^https?://#i', $post['cover_image']) ? $post['cover_image'] : SITE_URL . '/' . ltrim($post['cover_image'], '/'))
+    : SITE_URL . '/assets/images/hero.jpg';
+
+$canonicalUrl = SITE_URL . '/blog-post.php?slug=' . urlencode($post['slug']);
+$metaDescription = $post['meta_description'] ?: $post['excerpt'];
+$publishedIso = $post['published_at'] ? date('c', strtotime($post['published_at'])) : null;
+$modifiedIso = $post['updated_at'] ? date('c', strtotime($post['updated_at'])) : $publishedIso;
+
+$structuredData = [
+    '@context' => 'https://schema.org',
+    '@type' => 'BlogPosting',
+    'headline' => $post['title'],
+    'description' => $metaDescription,
+    'image' => [$ogImage],
+    'inLanguage' => 'en',
+    'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => $canonicalUrl],
+    'author' => ['@type' => 'Person', '@id' => SITE_URL . '/#pagidi', 'name' => $post['author'] ?: 'PaGidi'],
+    'publisher' => ['@type' => 'Person', '@id' => SITE_URL . '/#pagidi', 'name' => 'PaGidi'],
+];
+
+if ($publishedIso) {
+    $structuredData['datePublished'] = $publishedIso;
+}
+
+if ($modifiedIso) {
+    $structuredData['dateModified'] = $modifiedIso;
+}
+
+if ($post['category']) {
+    $structuredData['articleSection'] = $post['category'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,16 +62,14 @@ if (!$post) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($post['title']); ?> - PaGidi Expressions</title>
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="<?php echo htmlspecialchars($canonicalUrl); ?>">
     
     <?php if ($post['meta_title']): ?>
         <meta name="title" content="<?php echo htmlspecialchars($post['meta_title']); ?>">
     <?php endif; ?>
     
-    <?php if ($post['meta_description']): ?>
-        <meta name="description" content="<?php echo htmlspecialchars($post['meta_description']); ?>">
-    <?php else: ?>
-        <meta name="description" content="<?php echo htmlspecialchars($post['excerpt']); ?>">
-    <?php endif; ?>
+    <meta name="description" content="<?php echo htmlspecialchars($metaDescription); ?>">
     
     <?php if ($post['meta_keywords']): ?>
         <meta name="keywords" content="<?php echo htmlspecialchars($post['meta_keywords']); ?>">
@@ -45,14 +77,31 @@ if (!$post) {
     
     <!-- Open Graph Tags -->
     <meta property="og:title" content="<?php echo htmlspecialchars($post['title']); ?>">
-    <meta property="og:description" content="<?php echo htmlspecialchars($post['excerpt']); ?>">
-    <?php if ($post['cover_image']): ?>
-        <meta property="og:image" content="<?php echo htmlspecialchars($post['cover_image']); ?>">
-    <?php else: ?>
-        <meta property="og:image" content="assets/images/hero.jpg">
-    <?php endif; ?>
-    <meta property="og:url" content="<?php echo SITE_URL; ?>/blog-post.php?slug=<?php echo htmlspecialchars($post['slug']); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars($metaDescription); ?>">
+    <meta property="og:image" content="<?php echo htmlspecialchars($ogImage); ?>">
+    <meta property="og:url" content="<?php echo htmlspecialchars($canonicalUrl); ?>">
     <meta property="og:type" content="article">
+    <meta property="og:site_name" content="PaGidi Expressions">
+    <?php if ($publishedIso): ?>
+        <meta property="article:published_time" content="<?php echo htmlspecialchars($publishedIso); ?>">
+    <?php endif; ?>
+    <?php if ($modifiedIso): ?>
+        <meta property="article:modified_time" content="<?php echo htmlspecialchars($modifiedIso); ?>">
+    <?php endif; ?>
+    <?php if ($post['author']): ?>
+        <meta property="article:author" content="<?php echo htmlspecialchars($post['author']); ?>">
+    <?php endif; ?>
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo htmlspecialchars($post['title']); ?>">
+    <meta name="twitter:description" content="<?php echo htmlspecialchars($metaDescription); ?>">
+    <meta name="twitter:image" content="<?php echo htmlspecialchars($ogImage); ?>">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    <?php echo json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT); ?>
+    </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">

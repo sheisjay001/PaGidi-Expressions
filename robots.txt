@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin.php
+Disallow: /admin-login.php
+Disallow: /api/blog.php
+
+Sitemap: https://pagidi-expressions.onrender.com/sitemap.php
