@@ -20,6 +20,15 @@ CREATE TABLE IF NOT EXISTS posts (
     published_at TIMESTAMP NULL
 );
 
+-- Uploads table (images stored in the database so they survive container restarts)
+CREATE TABLE IF NOT EXISTS uploads (
+    id SERIAL PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    mime_type VARCHAR(100) NOT NULL,
+    data TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,

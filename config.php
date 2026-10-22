@@ -13,13 +13,7 @@ define('SESSION_NAME', 'pagidi_admin_session');
 
 // Site Configuration
 define('SITE_URL', getenv('SITE_URL') ?: 'http://localhost');
-define('UPLOAD_DIR', __DIR__ . '/uploads/');
 define('MAX_UPLOAD_SIZE', 20 * 1024 * 1024); // 20MB
-
-// Create uploads directory if it doesn't exist
-if (!file_exists(UPLOAD_DIR)) {
-    mkdir(UPLOAD_DIR, 0755, true);
-}
 
 // Database Connection
 function getDBConnection() {
@@ -88,7 +82,22 @@ function sanitize($data) {
     return htmlspecialchars(strip_tags(trim($data)), ENT_QUOTES, 'UTF-8');
 }
 
-// Handle image upload
+// Create the uploads table if it does not exist yet
+function ensureUploadsTable($db) {
+    $idColumn = (DB_TYPE === 'pgsql') ? 'SERIAL PRIMARY KEY' : 'INT AUTO_INCREMENT PRIMARY KEY';
+
+    $db->exec("CREATE TABLE IF NOT EXISTS uploads (
+        id $idColumn,
+        filename VARCHAR(255) NOT NULL,
+        mime_type VARCHAR(100) NOT NULL,
+        data TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )");
+}
+
+// Handle image upload.
+// Images are stored in the database (base64) so they survive container restarts,
+// which wipe the local filesystem on hosts like Render.
 function handleImageUpload($file) {
     if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
         return ['success' => false, 'error' => 'No file uploaded or upload error'];
@@ -109,16 +118,30 @@ function handleImageUpload($file) {
         return ['success' => false, 'error' => 'Invalid file type (only PNG, JPG, WEBP allowed)'];
     }
 
-    // Generate unique filename
-    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = uniqid() . '_' . time() . '.' . $extension;
-    $filepath = UPLOAD_DIR . $filename;
-
-    // Move file
-    if (move_uploaded_file($file['tmp_name'], $filepath)) {
-        return ['success' => true, 'filename' => $filename, 'path' => 'uploads/' . $filename];
+    $binary = file_get_contents($file['tmp_name']);
+    if ($binary === false) {
+        return ['success' => false, 'error' => 'Failed to read uploaded file'];
     }
 
-    return ['success' => false, 'error' => 'Failed to save file'];
+    try {
+        $db = getDBConnection();
+        if (!$db) {
+            throw new Exception('Database connection failed');
+        }
+
+        ensureUploadsTable($db);
+
+        $stmt = $db->prepare("INSERT INTO uploads (filename, mime_type, data) VALUES (?, ?, ?)");
+        $stmt->execute([$file['name'], $mimeType, base64_encode($binary)]);
+
+        return [
+            'success' => true,
+            'filename' => $file['name'],
+            'path' => 'api/image.php?id=' . $db->lastInsertId()
+        ];
+    } catch (Exception $e) {
+        error_log('Image upload failed: ' . $e->getMessage());
+        return ['success' => false, 'error' => 'Failed to save image'];
+    }
 }
 ?>
