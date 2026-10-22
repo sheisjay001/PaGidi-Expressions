@@ -82,21 +82,24 @@ try {
         case 'create_post':
             // Create new post (admin only)
             requireAdmin();
-            
+
             $data = json_decode(file_get_contents('php://input'), true);
-            
+
+            // Log the featured value for debugging
+            error_log("Featured value received: " . var_export($data['featured'] ?? 'NOT SET', true));
+
             $slug = generateSlug($data['title']);
-            
+
             // Check if slug exists
             $stmt = $db->prepare("SELECT id FROM posts WHERE slug = ?");
             $stmt->execute([$slug]);
             if ($stmt->fetch()) {
                 $slug .= '-' . time();
             }
-            
+
             $sql = "INSERT INTO posts (title, slug, excerpt, content, author, category, status, featured, cover_image, meta_title, meta_description, meta_keywords, published_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
+
             $publishedAt = ($data['status'] === 'published') ? date('Y-m-d H:i:s') : null;
 
             // Convert featured to boolean (handle empty strings, null, etc.)
@@ -104,6 +107,8 @@ try {
             if ($featured === null) {
                 $featured = false;
             }
+
+            error_log("Featured after conversion: " . var_export($featured, true));
             
             $stmt = $db->prepare($sql);
             $stmt->execute([
