@@ -98,9 +98,12 @@ try {
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
             $publishedAt = ($data['status'] === 'published') ? date('Y-m-d H:i:s') : null;
-            
-            // Convert featured to boolean
-            $featured = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+            // Convert featured to boolean (handle empty strings, null, etc.)
+            $featured = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($featured === null) {
+                $featured = false;
+            }
             
             $stmt = $db->prepare($sql);
             $stmt->execute([
@@ -134,9 +137,12 @@ try {
             
             // Update slug if title changed
             $slug = $data['slug'] ?? generateSlug($data['title']);
-            
-            // Convert featured to boolean
-            $featured = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+            // Convert featured to boolean (handle empty strings, null, etc.)
+            $featured = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($featured === null) {
+                $featured = false;
+            }
             
             $sql = "UPDATE posts SET
                     title = ?,
